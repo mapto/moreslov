@@ -93,10 +93,11 @@ def page_corpus_html(
             fid = "_".join(ftitle.split(" ")).lower()
             # ftitle = " ".join(parts)
             fulltext += (
-                "<br/>"
+                "<br/><article>"
                 + title_templ.format(id=fid, level=2, content=ftitle)
+                + '<section class="corpus">'
                 + fin.read()
-                + "<br/>"
+                + "</section></article><br/>"
             )
     a = Annotator(stemmer, fulltext, values_br)
     annotated = a.rich_text()

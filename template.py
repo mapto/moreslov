@@ -209,7 +209,7 @@ index_templ = """<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>moreever - Syntactic Identification of Values in Text Corpora</title>
+    <title>moreslov - Syntactic Identification of Citations in Text Corpora</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="index.css">
     <script src="index.js"></script>
@@ -217,7 +217,7 @@ index_templ = """<!DOCTYPE html>
 <body onload="init()">
   <form class="menu">
     <div>
-    <h1 class="title"><a href="https://github.com/umilISLab/moreever/">moreever</a></h1>
+    <h1 class="title"><a href="https://github.com/umilISLab/moreever/">moreslov</a></h1>
     </div>
     <div>
       <input type="hidden" id="vocab-select" value="{vocab}"/>

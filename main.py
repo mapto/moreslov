@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A dynamic service for moreever. See https://github.com/umilISLab/moreever/ for details."""
+"""A dynamic service for moreslov. See https://github.com/umilISLab/moreever/ for details."""
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
@@ -35,7 +35,7 @@ class SVGResponse(Response):
 
 
 app = FastAPI(
-    title="moreever",
+    title="moreslov",
     description=__doc__,
     # docs_url="/",
     version="0.2.0",

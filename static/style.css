@@ -1,10 +1,26 @@
 @import url('//fonts.googleapis.com/css?family=EB+Garamond&display=swap');
 
+@font-face{
+    font-family:'Bukyvede';
+    src:url('/fonts/bukyvede-regular-webfont.eot');
+    src:url('/fonts/bukyvede-regular-webfont.eot?#iefix') format('embedded-opentype'), 
+        url('/fonts/bukyvede-regular-webfont.woff') format('woff'), 
+        url('/fonts/bukyvede-regular-webfont.ttf') format('truetype'), 
+        url('/fonts/bukyvede-regular-webfont.svg#BukyvedeRegular') format('svg');
+    font-weight:normal;
+    font-style:normal;
+
+}
+
 body {
     font-family: 'EB Garamond', serif;
     color: indigo;
     background-color: whitesmoke;
     border: 0;
+}
+
+.corpus {
+    font-family: BukyVede !important;
 }
 
 div {
@@ -22,4 +38,5 @@ div {
     /* cursor: help; */
     color: black;
     text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+    font-family: BukyVede !important;
 }

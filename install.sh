@@ -2,5 +2,5 @@
 
 pip install -r requirements.txt
 
-python -m nltk.downloader punkt
-python -m nltk.downloader wordnet
+python -c 'import stanza; stanza.download("cu")'
+

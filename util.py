@@ -9,15 +9,10 @@ from glob import glob
 import filecmp
 import shutil
 from datetime import datetime
+import regex as re
 
-from nltk import sent_tokenize, word_tokenize  # type: ignore
-from nltk.tokenize import RegexpTokenizer  # type: ignore
+regex_token_sep = r"[\s\.\-\:]+"
 
-from nltk.stem import WordNetLemmatizer  # type: ignore
-
-wnl = WordNetLemmatizer()
-
-regex_token = r"\w+"
 
 from settings import DATEFORMAT_LOG, VOCAB, CORPORA
 
@@ -97,46 +92,24 @@ def path2name(path: str) -> str:
     return " ".join(w.capitalize() for w in path.split("#")[-1].split("_"))
 
 
-def story_tokenize(story: str) -> list[list[str]]:
-    """get the text of the story and returns a lists of sentences represented as list of lemmas.
+def tokenizer(text: str) -> list[str]:
+    return re.split(regex_token_sep, text)
 
-    >>> from nltk.stem import SnowballStemmer
-    >>> from nltk.stem.lancaster import LancasterStemmer
-    >>> from nltk.stem import PorterStemmer
-    >>> from nltk.stem import WordNetLemmatizer
-    >>> wnl = WordNetLemmatizer().lemmatize
-    >>> ps = PorterStemmer().stem
-    >>> sb = SnowballStemmer("english").stem
-    >>> lan = LancasterStemmer().stem
-    >>> story = "Once upon a time in the forest. Then something else happened! There's also open-mindedness. And so the story ends."
-    >>> story_tokenize(lambda x: x, story)
-    [['once', 'upon', 'a', 'time', 'in', 'the', 'forest'], ['then', 'something', 'else', 'happened'], ['there', 's', 'also', 'open', 'mindedness'], ['and', 'so', 'the', 'story', 'ends']]
-    >>> story_tokenize(wnl, story)
-    [['once', 'upon', 'a', 'time', 'in', 'the', 'forest'], ['then', 'something', 'else', 'happened'], ['there', 's', 'also', 'open', 'mindedness'], ['and', 'so', 'the', 'story', 'end']]
-    >>> story_tokenize(ps, story)
-    [['onc', 'upon', 'a', 'time', 'in', 'the', 'forest'], ['then', 'someth', 'els', 'happen'], ['there', 's', 'also', 'open', 'minded'], ['and', 'so', 'the', 'stori', 'end']]
-    >>> story_tokenize(sb, story)
-    [['onc', 'upon', 'a', 'time', 'in', 'the', 'forest'], ['then', 'someth', 'els', 'happen'], ['there', 's', 'also', 'open', 'minded'], ['and', 'so', 'the', 'stori', 'end']]
-    >>> story_tokenize(lan, story)
-    [['ont', 'upon', 'a', 'tim', 'in', 'the', 'forest'], ['then', 'someth', 'els', 'hap'], ['ther', 's', 'also', 'op', 'mind'], ['and', 'so', 'the', 'story', 'end']]
-    >>> story = "marriage married"
-    >>> story_tokenize(wnl, story)
-    [['marriage', 'married']]
-    >>> story_tokenize(ps, story)
-    [['marriag', 'marri']]
-    >>> story_tokenize(sb, story)
-    [['marriag', 'marri']]
-    >>> story_tokenize(lan, story)
-    [['marry', 'marry']]
-    """
+
+def sent_tokenizer(text: str) -> list[str]:
+    """In OCS sentences were not used much"""
+    return text.split("\n\n")
+
+
+def story_tokenize(story: str) -> list[list[str]]:
+    """get the text of the story and returns a lists of sentences represented as list of lemmas."""
     tokens = []
     words = []
-    tokenizer = RegexpTokenizer(regex_token)
 
-    sentences = sent_tokenize(story)
+    sentences = [story]
     for i, sentence in enumerate(sentences):
         # doc = word_tokenize(sentence)
-        doc = tokenizer.tokenize(sentence)
+        doc = tokenizer(sentence)
         words += [[t for t in doc if t not in string.punctuation + "\n"]]
     return words
 
@@ -183,8 +156,9 @@ def rmdirs():
 
 def mkdirs():
     from stemmers import stemmers
-    from vocabulary import vocabulary
-    from corpora import corpora
+
+    # from vocabulary import vocabulary
+    # from corpora import corpora
 
     if not os.path.exists("vocab"):
         os.mkdir("vocab")
@@ -213,6 +187,7 @@ def mkdirs():
 def get_dirs(path: str = "") -> List[str]:
     if not path:
         path = f"corpora.{CORPORA}/"
+    print(f"Loading from path {path}...")
     result = [
         f.replace(path, "") for f in glob(f"{path}/*") if os.path.isdir(os.path.join(f))
     ]

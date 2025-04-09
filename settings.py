@@ -42,3 +42,10 @@ LANG: Final = os.environ["ISO_LANG"]
 
 CLEAN_THRESHOLD: Final = 0
 # CLEAN_THRESHOLD: Final = 10
+
+# ENCODING = "utf-16-be"
+# ENCODING='utf-16'
+# ENCODING='utf-16-le'
+# ENCODING='utf-8'
+
+DEVICE='CPU'

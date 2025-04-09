@@ -32,7 +32,7 @@ class Text(Base):
 
 
 class Sentence(Base):
-    """Sentence of tokenized words"""
+    """Sentence of tokenized words. Could potentially become verse in historic texts"""
 
     __tablename__ = "sentences"
 

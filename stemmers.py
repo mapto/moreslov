@@ -1,71 +1,59 @@
 """The currently supported stemmers.
-To our purposes SnowballStemmer appears to be the most reasonable.
+These are called stemmers for legacy reasons, but they are actually any useful sort of simplifiers, be it lemmatizers or else.
 Also, notice dummy stemmer that leaves words as they are,
 so algoritms can also work without stemming."""
 
-import nltk  # type: ignore
-import simplemma
 import spacy
+import stanza
+import spacy_stanza
+from spacy import displacy
+from tqdm import tqdm
 
-from settings import LANG
+from settings import LANG, DEVICE
 
-from morphroot import get_root_morpheme, roots
+from util import tokenizer
 
-# nltk.download("wordnet")
-nlp = spacy.load(f"{LANG}_core_web_lg")
+# stanza.download(LANG)
+nlp = spacy_stanza.load_pipeline("xx", lang=LANG, use_gpu=DEVICE != 'CPU')
+
+
+def stanza_lemmatize(word, sent):
+    if not sent:
+        sent = word
+    doc = nlp(sent)
+    for token in doc:
+        if token.text == word:
+            return token.lemma_
+
+
+def stanza_sent_lemmatize(sent):
+    doc = nlp(sent)
+    return [(token.text, token.lemma_) for token in doc]
+
 
 # changes here need to also be reflected in static/index.html
 # en
 all_stemmers = {
-    "en": {
+    "cu": {
         "dummy": lambda word, sent: word.lower(),
-        "wnl": lambda word, sent: nltk.stem.WordNetLemmatizer().lemmatize(word.lower()),
-        "sb": lambda word, sent: nltk.stem.SnowballStemmer("english").stem(
-            word.lower()
-        ),
-        # Double application of the Snowball Stemmer to ensure it is idempotent function over the values
-        # "sb2": lambda word, sent: nltk.stem.SnowballStemmer("english").stem(
-        #     nltk.stem.SnowballStemmer("english").stem(word.lower())
-        # ),
-        # Snowball stemmer on lemmatized tokens
-        "sb-lem": lambda word, sent: nltk.stem.SnowballStemmer("english").stem(
-            nltk.stem.WordNetLemmatizer().lemmatize(word.lower())
-        ),
-        "ps": lambda word, sent: nltk.stem.PorterStemmer().stem(word.lower()),
-        # "lan": lambda word, sent: nltk.stem.lancaster.LancasterStemmer().stem(
-        #     word.lower()
-        # ),
-        # "morph": lambda x: get_root_morpheme(nltk.stem.WordNetLemmatizer().lemmatize(x.lower()), roots),
-    },
-    "it": {
-        "dummy": lambda word, sent: word.lower(),
-        "simpl": lambda word, sent: simplemma.lemmatize(word.lower(), lang="it"),
-        "sb": lambda word, sent: nltk.stem.SnowballStemmer("italian").stem(
-            word.lower()
-        ),
-        # Double application of the Snowball Stemmer to ensure it is idempotent function over the values
-        "sb2": lambda word, sent: nltk.stem.SnowballStemmer("italian").stem(
-            nltk.stem.SnowballStemmer("italian").stem(word.lower())
-        ),
-        "sb-lem": lambda word, sent: nltk.stem.SnowballStemmer("english").stem(
-            simplemma.lemmatize(word.lower(), lang="it")
-        ),
-    },
+        "stanza": stanza_lemmatize,
+    }
 }
 
+all_sent_stemmers = {
+    "cu": {
+        "dummy": lambda x: [(t, t) for t in tokenizer(x) if t.strip()],
+        "stanza": stanza_sent_lemmatize,
+    }
+}
 
 stemmers = all_stemmers[LANG]
+sent_stemmers = all_sent_stemmers[LANG]
 
 stemmer_labels = {
-    "dummy": "none (exact words)",
-    "sb": "SnowBall Stemmer",
-    "sb2": "SnowBall repeated",
-    "ps": "Porter Stemmer",
-    "lan": "Lancaster Stemmer",
-    "morph": "Morphological Root",
-    "sb-lem": "Stemmed Lemmas",
-    "wnl": "Lemmatizer",
-    "simpl": "Lemmatizer",
+    "dummy": "Word Forms",
+    "stanza": "Lemmatizer",
 }
 
-default_stemmer = "sb-lem"
+# default_stemmer = "stanza"
+default_stemmer = "dummy"

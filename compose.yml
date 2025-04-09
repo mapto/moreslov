@@ -32,7 +32,7 @@ services:
       - 8000:8000
     volumes:
       - .:/app
-      - ./data/nltk_data:/root/nltk_data
+      - ./models:/root/stanza_resources
     environment:
       - VOCAB=${VOCAB}
       - CORPORA=${CORPORA}
